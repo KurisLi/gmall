@@ -1,6 +1,7 @@
 package com.atguigu.gmall.pms.dao;
 
 import com.atguigu.gmall.pms.entity.AttrEntity;
+import com.atguigu.gmall.pms.vo.AttrVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,5 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface AttrDao extends BaseMapper<AttrEntity> {
-	
+
+
 }

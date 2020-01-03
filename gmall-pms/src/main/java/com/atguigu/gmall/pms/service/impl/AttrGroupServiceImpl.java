@@ -1,7 +1,18 @@
 package com.atguigu.gmall.pms.service.impl;
 
+import com.atguigu.gmall.pms.dao.AttrAttrgroupRelationDao;
+import com.atguigu.gmall.pms.dao.AttrDao;
+import com.atguigu.gmall.pms.entity.AttrAttrgroupRelationEntity;
+import com.atguigu.gmall.pms.entity.AttrEntity;
+import com.atguigu.gmall.pms.vo.GroupVo;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,11 +23,20 @@ import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.gmall.pms.dao.AttrGroupDao;
 import com.atguigu.gmall.pms.entity.AttrGroupEntity;
 import com.atguigu.gmall.pms.service.AttrGroupService;
+import org.springframework.util.CollectionUtils;
 
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
 
+    @Autowired
+    private AttrGroupDao attrGroupDao;
+
+    @Autowired
+    private AttrAttrgroupRelationDao attrAttrgroupRelationDao;
+
+    @Autowired
+    private AttrDao attrDao;
     @Override
     public PageVo queryPage(QueryCondition params) {
         IPage<AttrGroupEntity> page = this.page(
@@ -27,4 +47,31 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         return new PageVo(page);
     }
 
+    @Override
+    public PageVo queryAttrGroupByCatId(Long catId, QueryCondition queryCondition) {
+        IPage<AttrGroupEntity> page = this.page(
+                new Query<AttrGroupEntity>().getPage(queryCondition),
+                new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catId));
+        return new PageVo(page);
+    }
+
+    @Override
+    public GroupVo queryGroupVoByGid(Long gid) {
+        GroupVo groupVo = new GroupVo();
+        //根据gid查询组信息
+        AttrGroupEntity attrGroup = attrGroupDao.selectById(gid);
+        BeanUtils.copyProperties(attrGroup,groupVo);
+        //根据gid查询关联表信息
+        List<AttrAttrgroupRelationEntity> relations = attrAttrgroupRelationDao.selectList(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_group_id", gid));
+        groupVo.setRelations(relations);
+        //判断relations是否为空
+        if (CollectionUtils.isEmpty(relations)){
+            return groupVo;
+        }
+        //根据关联表中attrid查询属性信息
+        List<Long> attrIdList = relations.stream().map(AttrAttrgroupRelationEntity::getAttrId).collect(Collectors.toList());
+        List<AttrEntity> attrEntities = attrDao.selectBatchIds(attrIdList);
+        groupVo.setAttrEntities(attrEntities);
+        return groupVo;
+    }
 }
