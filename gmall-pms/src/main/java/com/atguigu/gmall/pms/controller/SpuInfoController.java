@@ -8,6 +8,7 @@ import java.util.Map;
 import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
+import com.atguigu.gmall.pms.vo.SpuInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import com.atguigu.gmall.pms.service.SpuInfoService;
 @RestController
 @RequestMapping("pms/spuinfo")
 public class SpuInfoController {
+
     @Autowired
     private SpuInfoService spuInfoService;
 
@@ -74,9 +76,9 @@ public class SpuInfoController {
     @ApiOperation("保存")
     @PostMapping("/save")
     @PreAuthorize("hasAuthority('pms:spuinfo:save')")
-    public Resp<Object> save(@RequestBody SpuInfoEntity spuInfo){
-		spuInfoService.save(spuInfo);
-
+    public Resp<Object> save(@RequestBody SpuInfoVo spuInfoVo){
+		//spuInfoService.save(spuInfoVo);
+        spuInfoService.bigSave(spuInfoVo);
         return Resp.ok(null);
     }
 
@@ -100,8 +102,6 @@ public class SpuInfoController {
     @PreAuthorize("hasAuthority('pms:spuinfo:delete')")
     public Resp<Object> delete(@RequestBody Long[] ids){
 		spuInfoService.removeByIds(Arrays.asList(ids));
-
         return Resp.ok(null);
     }
-
 }
