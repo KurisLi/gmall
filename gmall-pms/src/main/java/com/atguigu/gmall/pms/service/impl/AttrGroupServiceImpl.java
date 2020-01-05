@@ -74,4 +74,16 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         groupVo.setAttrEntities(attrEntities);
         return groupVo;
     }
+
+    @Override
+    public List<GroupVo> queryAttrGroupAndAttrByCatId(Long catId) {
+        //先根据catid查询所有的组
+        List<AttrGroupEntity> attrGroupEntities = attrGroupDao.selectList(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catId));
+            //获取到所有的组id
+        List<Long> groupIdList = attrGroupEntities.stream().map(attrGroupEntity -> attrGroupEntity.getAttrGroupId()).collect(Collectors.toList());
+        //根据组id在关联表中查出所有的skuid
+        List<GroupVo> groupVos = groupIdList.stream().map(groupId -> queryGroupVoByGid(groupId)).collect(Collectors.toList());
+        //根据skuid查询所有的sku信息
+        return groupVos;
+    }
 }

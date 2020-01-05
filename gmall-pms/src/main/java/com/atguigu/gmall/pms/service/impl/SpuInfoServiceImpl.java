@@ -1,5 +1,8 @@
 package com.atguigu.gmall.pms.service.impl;
 
+import com.atguigu.core.bean.Resp;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -24,6 +27,23 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 new QueryWrapper<SpuInfoEntity>()
         );
 
+        return new PageVo(page);
+    }
+
+    @Override
+    public PageVo getSpuInfoByCatId(QueryCondition queryCondition, Long catId) {
+        String key = queryCondition.getKey();
+        QueryWrapper<SpuInfoEntity> wrapper = new QueryWrapper<>();
+        if(catId != 0){
+            wrapper.eq("catalog_id",catId);
+        }
+        if (StringUtils.isNotBlank(key)){
+            wrapper.and(queryWrapper -> queryWrapper.eq("id",key).or().like("spu_name",key));
+        }
+        IPage<SpuInfoEntity> page = this.page(
+                new Query<SpuInfoEntity>().getPage(queryCondition),
+                wrapper
+        );
         return new PageVo(page);
     }
 

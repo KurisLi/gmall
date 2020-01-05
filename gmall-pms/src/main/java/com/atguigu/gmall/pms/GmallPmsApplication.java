@@ -13,7 +13,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @MapperScan("com.atguigu.gmall.pms.dao")
 @EnableSwagger2
 @RefreshScope
-@EnableTransactionManagement
 public class GmallPmsApplication {
 
 	public static void main(String[] args) {

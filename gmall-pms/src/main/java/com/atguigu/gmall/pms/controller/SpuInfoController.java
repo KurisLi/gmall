@@ -1,6 +1,7 @@
 package com.atguigu.gmall.pms.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -33,6 +34,15 @@ public class SpuInfoController {
     @Autowired
     private SpuInfoService spuInfoService;
 
+    /**
+     * 通过catId查询spu信息
+     */
+    @GetMapping
+    public Resp<PageVo> getSpuInfoByCatId(QueryCondition queryCondition
+            , @RequestParam(value = "catId" ,defaultValue = "0") Long catId){
+        PageVo pageVo = spuInfoService.getSpuInfoByCatId(queryCondition,catId);
+        return Resp.ok(pageVo);
+    }
     /**
      * 列表
      */
