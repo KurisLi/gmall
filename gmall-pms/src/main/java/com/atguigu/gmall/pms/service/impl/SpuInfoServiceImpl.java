@@ -9,6 +9,7 @@ import com.atguigu.gmall.pms.vo.BaseAttrVo;
 import com.atguigu.gmall.pms.vo.SkuInfoVo;
 import com.atguigu.gmall.pms.vo.SpuInfoVo;
 import com.atguigu.gmall.sms.vo.SaleVo;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,6 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 new Query<SpuInfoEntity>().getPage(params),
                 new QueryWrapper<SpuInfoEntity>()
         );
-
         return new PageVo(page);
     }
 
@@ -73,13 +73,12 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     }
 
     @Override
-    @Transactional
+    @GlobalTransactional
     public void bigSave(SpuInfoVo spuInfoVo) {
         /**
          * 1.1保存spu相关信息
          */
         Long spuId = this.saveSpuinfo(spuInfoVo);
-
         /**
          * 1.2保存spu详细信息
          */
@@ -94,6 +93,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
          * 2.保存sku相关信息，和销售相关信息
          */
         skuInfoService.saveSkuInfoWithSaleInfo(spuInfoVo, spuId);
+        Integer a = 2/0;
     }
 
     public Long saveSpuinfo(SpuInfoVo spuInfoVo) {

@@ -1,4 +1,4 @@
-package com.atguigu.gmall.pms.config;
+package com.atguigu.gmall.sms.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.zaxxer.hikari.HikariDataSource;
