@@ -18,6 +18,7 @@ import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.gmall.sms.dao.SkuFullReductionDao;
 import com.atguigu.gmall.sms.entity.SkuFullReductionEntity;
 import com.atguigu.gmall.sms.service.SkuFullReductionService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -47,6 +48,7 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
     }
 
     @Override
+    @Transactional
     public void saveSales(SaleVo saleVo) {
         //3.保存营销相关信息
             //3.1保存满减信息

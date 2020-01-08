@@ -4,9 +4,7 @@ import com.atguigu.gmall.pms.dao.SkuInfoDao;
 import com.atguigu.gmall.pms.dao.SpuInfoDescDao;
 import com.atguigu.gmall.pms.entity.*;
 import com.atguigu.gmall.pms.feignService.SaleFeignService;
-import com.atguigu.gmall.pms.service.ProductAttrValueService;
-import com.atguigu.gmall.pms.service.SkuImagesService;
-import com.atguigu.gmall.pms.service.SkuSaleAttrValueService;
+import com.atguigu.gmall.pms.service.*;
 import com.atguigu.gmall.pms.vo.BaseAttrVo;
 import com.atguigu.gmall.pms.vo.SkuInfoVo;
 import com.atguigu.gmall.pms.vo.SpuInfoVo;
@@ -29,7 +27,8 @@ import com.atguigu.core.bean.Query;
 import com.atguigu.core.bean.QueryCondition;
 
 import com.atguigu.gmall.pms.dao.SpuInfoDao;
-import com.atguigu.gmall.pms.service.SpuInfoService;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 
@@ -37,22 +36,14 @@ import org.springframework.util.CollectionUtils;
 public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> implements SpuInfoService {
 
     @Autowired
-    private SpuInfoDescDao spuInfoDescDao;
+    private SpuInfoDescService spuInfoDescService;
 
     @Autowired
     private ProductAttrValueService attrValueService;
 
     @Autowired
-    private SkuInfoDao skuInfoDao;
+    private SkuInfoService skuInfoService;
 
-    @Autowired
-    private SkuImagesService skuImagesService;
-
-    @Autowired
-    private SkuSaleAttrValueService saleAttrValueService;
-
-    @Autowired
-    private SaleFeignService saleFeignService;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -82,90 +73,35 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     }
 
     @Override
+    @Transactional
     public void bigSave(SpuInfoVo spuInfoVo) {
+        /**
+         * 1.1保存spu相关信息
+         */
+        Long spuId = this.saveSpuinfo(spuInfoVo);
+
+        /**
+         * 1.2保存spu详细信息
+         */
+        spuInfoDescService.saveSpuinfoDesc(spuInfoVo, spuId);
+
+        /**
+         * 1.3保存spu基本属性
+         */
+        attrValueService.saveAttrValue(spuInfoVo, spuId);
+
+        /**
+         * 2.保存sku相关信息，和销售相关信息
+         */
+        skuInfoService.saveSkuInfoWithSaleInfo(spuInfoVo, spuId);
+    }
+
+    public Long saveSpuinfo(SpuInfoVo spuInfoVo) {
         //1.保存spu相关信息
         //1.1保存spuinfo信息
         spuInfoVo.setCreateTime(new Date());
         spuInfoVo.setUodateTime(spuInfoVo.getCreateTime());
         this.save(spuInfoVo);
-        Long spuId = spuInfoVo.getId();
-        //1.2保存spu详细信息
-        List<String> spuImages = spuInfoVo.getSpuImages();
-        SpuInfoDescEntity spuInfoDescEntity = new SpuInfoDescEntity();
-        if (!CollectionUtils.isEmpty(spuImages)) {
-            spuInfoDescEntity.setDecript(StringUtils.join(spuImages, ","));
-            spuInfoDescEntity.setSpuId(spuId);
-            spuInfoDescDao.insert(spuInfoDescEntity);
-        }
-        //1.3保存spu基本属性
-        List<BaseAttrVo> baseAttrs = spuInfoVo.getBaseAttrs();
-        if (!CollectionUtils.isEmpty(baseAttrs)) {
-            List<ProductAttrValueEntity> productAttrValueEntities = baseAttrs.stream().map(baseAttrVo -> {
-                ProductAttrValueEntity productAttrValueEntity = new ProductAttrValueEntity();
-                BeanUtils.copyProperties(baseAttrVo, productAttrValueEntity);
-                productAttrValueEntity.setSpuId(spuId);
-                productAttrValueEntity.setAttrSort(0);
-                productAttrValueEntity.setQuickShow(1);
-                return productAttrValueEntity;
-            }).collect(Collectors.toList());
-            attrValueService.saveBatch(productAttrValueEntities);
-        }
-
-        List<SkuInfoVo> skus = spuInfoVo.getSkus();
-        if (CollectionUtils.isEmpty(skus)) {
-            return;
-        }
-        skus.forEach(skuInfoVo -> {
-            //2.保存sku相关信息
-            //2.1保存sku相关信息
-            SkuInfoEntity skuInfoEntity = new SkuInfoEntity();
-            BeanUtils.copyProperties(skuInfoVo, skuInfoEntity);
-            skuInfoEntity.setSpuId(spuId);
-            skuInfoEntity.setCatalogId(spuInfoVo.getCatalogId());
-            skuInfoEntity.setBrandId(spuInfoVo.getBrandId());
-            skuInfoEntity.setSkuCode(UUID.randomUUID().toString());
-            List<String> images = skuInfoVo.getImages();
-            if (!CollectionUtils.isEmpty(images)) {
-                skuInfoEntity.setSkuDefaultImg(skuInfoEntity.getSkuDefaultImg() == null ? images.get(0) : skuInfoEntity.getSkuDefaultImg());
-            }
-            skuInfoDao.insert(skuInfoEntity);
-            Long skuId = skuInfoEntity.getSkuId();
-            //2.2保存sku图片
-            if (!CollectionUtils.isEmpty(images)) {
-                List<SkuImagesEntity> imagesEntities = images.stream().map(imageUrl -> {
-                    SkuImagesEntity skuImagesEntity = new SkuImagesEntity();
-                    skuImagesEntity.setSkuId(skuId);
-                    skuImagesEntity.setImgUrl(imageUrl);
-                    skuImagesEntity.setDefaultImg(StringUtils.equals(skuImagesEntity.getImgUrl(), imageUrl) ? 1 : 0);
-                    skuImagesEntity.setImgSort(0);
-                    return skuImagesEntity;
-                }).collect(Collectors.toList());
-                skuImagesService.saveBatch(imagesEntities);
-            }
-            //2.3保存sku销售属性
-            List<SkuSaleAttrValueEntity> saleAttrs = skuInfoVo.getSaleAttrs();
-            if (!CollectionUtils.isEmpty(saleAttrs)){
-                saleAttrs.forEach(skuSaleAttrValueEntity -> {
-                    skuSaleAttrValueEntity.setSkuId(skuId);
-                    skuSaleAttrValueEntity.setAttrSort(0);
-                });
-                saleAttrValueService.saveBatch(saleAttrs);
-            }
-         /*   if (!CollectionUtils.isEmpty(saleAttrs)){
-                List<SkuSaleAttrValueEntity> saleAttrValueEntities = saleAttrs.stream().map(skuSaleAttrValueEntity -> {
-                    SkuSaleAttrValueEntity saleAttrValueEntity = new SkuSaleAttrValueEntity();
-                    BeanUtils.copyProperties(skuSaleAttrValueEntity, saleAttrValueEntity);
-                    saleAttrValueEntity.setSkuId(skuId);
-                    //saleAttrValueEntity.setAttrSort(0);
-                    return saleAttrValueEntity;
-                }).collect(Collectors.toList());
-                saleAttrValueService.saveBatch(saleAttrValueEntities);
-            }*/
-            SaleVo saleVo = new SaleVo();
-            BeanUtils.copyProperties(skuInfoVo,saleVo);
-            saleVo.setSkuId(skuId);
-            saleFeignService.saveSales(saleVo);
-        });
+        return spuInfoVo.getId();
     }
-
 }

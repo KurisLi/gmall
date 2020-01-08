@@ -78,7 +78,7 @@ public class SpuInfoController {
     @PreAuthorize("hasAuthority('pms:spuinfo:save')")
     public Resp<Object> save(@RequestBody SpuInfoVo spuInfoVo){
 		//spuInfoService.save(spuInfoVo);
-        spuInfoService.bigSave(spuInfoVo);
+        this.spuInfoService.bigSave(spuInfoVo);
         return Resp.ok(null);
     }
 
