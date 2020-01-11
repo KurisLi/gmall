@@ -29,6 +29,8 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
     @Autowired
     private ProductAttrValueService attrValueService;
 
+    @Autowired
+    private ProductAttrValueDao attrValueDao;
     @Override
     public PageVo queryPage(QueryCondition params) {
         IPage<ProductAttrValueEntity> page = this.page(
@@ -37,6 +39,12 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
         );
 
         return new PageVo(page);
+    }
+
+    @Override
+    public List<ProductAttrValueEntity> queryAttrBySpuId(long spuId) {
+        List<ProductAttrValueEntity> productAttrValueEntities = attrValueDao.queryAttrBySpuId(spuId);
+        return productAttrValueEntities;
     }
 
     @Override

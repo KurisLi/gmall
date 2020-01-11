@@ -6,6 +6,8 @@ import com.atguigu.gmall.pms.entity.SpuInfoEntity;
 import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.QueryCondition;
 
+import java.util.List;
+
 
 /**
  * spu信息
@@ -25,5 +27,7 @@ public interface SpuInfoService extends IService<SpuInfoEntity> {
 
 
     Long saveSpuinfo(SpuInfoVo spuInfoVo);
+
+    List<SpuInfoEntity> querySpuList(QueryCondition queryCondition);
 }
 

@@ -57,6 +57,14 @@ public class SpuInfoController {
         return Resp.ok(page);
     }
 
+    /**
+     * 分页查询spu信息
+     */
+    @PostMapping("/query")
+    public Resp<List<SpuInfoEntity>> querySpuList(@RequestBody QueryCondition queryCondition){
+        List<SpuInfoEntity> spuInfoEntities = spuInfoService.querySpuList(queryCondition);
+        return  Resp.ok(spuInfoEntities);
+    }
 
     /**
      * 信息

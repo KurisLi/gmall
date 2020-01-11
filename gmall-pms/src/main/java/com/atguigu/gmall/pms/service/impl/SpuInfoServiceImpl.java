@@ -45,6 +45,8 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     @Autowired
     private SkuInfoService skuInfoService;
 
+    @Autowired
+    private SpuInfoService spuInfoService;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -93,7 +95,6 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
          * 2.保存sku相关信息，和销售相关信息
          */
         skuInfoService.saveSkuInfoWithSaleInfo(spuInfoVo, spuId);
-        Integer a = 2/0;
     }
 
     public Long saveSpuinfo(SpuInfoVo spuInfoVo) {
@@ -103,5 +104,12 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         spuInfoVo.setUodateTime(spuInfoVo.getCreateTime());
         this.save(spuInfoVo);
         return spuInfoVo.getId();
+    }
+
+    @Override
+    public List<SpuInfoEntity> querySpuList(QueryCondition queryCondition) {
+        IPage<SpuInfoEntity> page = spuInfoService.page(new Query<SpuInfoEntity>().getPage(queryCondition),
+                new QueryWrapper<SpuInfoEntity>().eq("publish_status", 1));
+        return page.getRecords();
     }
 }
