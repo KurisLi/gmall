@@ -11,6 +11,7 @@ import com.atguigu.gmall.pms.vo.SpuInfoVo;
 import com.atguigu.gmall.sms.vo.SaleVo;
 import io.seata.spring.annotation.GlobalTransactional;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,9 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Autowired
     private SpuInfoService spuInfoService;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -95,6 +99,12 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
          * 2.保存sku相关信息，和销售相关信息
          */
         skuInfoService.saveSkuInfoWithSaleInfo(spuInfoVo, spuId);
+
+        sendMsg("insert",spuId);
+    }
+
+    private void sendMsg(String type,Long spuId) {
+        amqpTemplate.convertAndSend("GMALL-PMS-EXCHANGE","item."+type,spuId);
     }
 
     public Long saveSpuinfo(SpuInfoVo spuInfoVo) {

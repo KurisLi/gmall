@@ -8,6 +8,7 @@ import java.util.Map;
 import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
+import com.atguigu.gmall.pms.vo.CategoryVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,15 @@ import com.atguigu.gmall.pms.service.CategoryService;
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
+
+    /**
+     * 根据一级分类的id查询二级分类和三级分类
+     */
+    @GetMapping("cates/{pid}")
+    public Resp<List<CategoryVo>> queryCategory2and3ByPid(@PathVariable("pid") Long pid){
+        List<CategoryVo> categoryVos = categoryService.queryCategory2and3ByPid(pid);
+        return Resp.ok(categoryVos);
+    }
 
     /**
      * 根据level或pid查询分类信息

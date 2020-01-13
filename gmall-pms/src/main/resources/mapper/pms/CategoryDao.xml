@@ -15,6 +15,21 @@
         <result property="productUnit" column="product_unit"/>
         <result property="productCount" column="product_count"/>
     </resultMap>
+    <resultMap type="com.atguigu.gmall.pms.vo.CategoryVo" id="categoryVoMap">
+        <result property="catId" column="cat_id"/>
+        <result property="name" column="name"/>
+        <result property="parentCid" column="parent_cid"/>
+        <result property="catLevel" column="cat_level"/>
+        <result property="showStatus" column="show_status"/>
+        <result property="sort" column="sort"/>
+        <result property="icon" column="icon"/>
+        <result property="productUnit" column="product_unit"/>
+        <result property="productCount" column="product_count"/>
+        <collection property="subs" javaType="List" ofType="com.atguigu.gmall.pms.entity.CategoryEntity" column="cat_id" select="queryCategory2and3ByPid"></collection>
+    </resultMap>
 
+    <select id="queryCategory2and3ByPid" resultMap="categoryVoMap">
+        SELECT * FROM pms_category WHERE parent_cid = #{pid}
+    </select>
 
 </mapper>
