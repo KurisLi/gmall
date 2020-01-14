@@ -40,4 +40,13 @@ public class IndexController {
         List<CategoryVo> categoryVos = indexService.queryCategory2and3ByPid(pid);
         return Resp.ok(categoryVos);
     }
+
+    /**
+     * 测试普通锁
+     */
+    @GetMapping("/testLock")
+    public Resp<String> testLock(){
+        indexService.testLock();
+        return Resp.ok(null);
+    }
 }
