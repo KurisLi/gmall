@@ -1,10 +1,13 @@
 package com.atguigu.gmall.sms.service;
 
+import com.atguigu.gmall.sms.vo.ItemSaleVo;
 import com.atguigu.gmall.sms.vo.SaleVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.gmall.sms.entity.SkuFullReductionEntity;
 import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.QueryCondition;
+
+import java.util.List;
 
 
 /**
@@ -20,5 +23,6 @@ public interface SkuFullReductionService extends IService<SkuFullReductionEntity
 
     void saveSales(SaleVo saleVo);
 
+    List<ItemSaleVo> queryItemSaleVoBySkuId(Long skuId);
 }
 

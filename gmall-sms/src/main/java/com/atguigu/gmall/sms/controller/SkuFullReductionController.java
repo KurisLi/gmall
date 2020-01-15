@@ -1,12 +1,14 @@
 package com.atguigu.gmall.sms.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
 import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
+import com.atguigu.gmall.sms.vo.ItemSaleVo;
 import com.atguigu.gmall.sms.vo.SaleVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,6 +35,12 @@ import com.atguigu.gmall.sms.service.SkuFullReductionService;
 public class SkuFullReductionController {
     @Autowired
     private SkuFullReductionService skuFullReductionService;
+
+    @GetMapping("/itemSaleVo/{skuId}")
+    public Resp<List<ItemSaleVo>> queryItemSaleVoBySkuId(@PathVariable("skuId") Long skuId){
+        List<ItemSaleVo> itemSaleVos = skuFullReductionService.queryItemSaleVoBySkuId(skuId);
+        return Resp.ok(itemSaleVos);
+    }
 
     @PostMapping("/sale")
     public Resp<Object> saveSales(@RequestBody SaleVo saleVo){

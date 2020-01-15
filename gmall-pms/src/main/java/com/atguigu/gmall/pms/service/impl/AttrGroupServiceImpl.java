@@ -2,15 +2,18 @@ package com.atguigu.gmall.pms.service.impl;
 
 import com.atguigu.gmall.pms.dao.AttrAttrgroupRelationDao;
 import com.atguigu.gmall.pms.dao.AttrDao;
+import com.atguigu.gmall.pms.dao.ProductAttrValueDao;
 import com.atguigu.gmall.pms.entity.AttrAttrgroupRelationEntity;
 import com.atguigu.gmall.pms.entity.AttrEntity;
+import com.atguigu.gmall.pms.entity.ProductAttrValueEntity;
+import com.atguigu.gmall.pms.vo.ItemBaseAttrVo;
 import com.atguigu.gmall.pms.vo.GroupVo;
+import com.atguigu.gmall.pms.vo.ItemGroupVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -37,6 +40,9 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
     @Autowired
     private AttrDao attrDao;
+
+    @Autowired
+    private ProductAttrValueDao attrValueDao;
     @Override
     public PageVo queryPage(QueryCondition params) {
         IPage<AttrGroupEntity> page = this.page(
@@ -93,5 +99,37 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         //根据skuid查询所有的sku信息
         return groupVos;*/
 
+    }
+
+    @Override
+    public List<ItemGroupVo> queryItemGroupVoBySpuIdAndCateId(Long spuId, Long cateId) {
+        //根据cateid获取组的信息
+        List<AttrGroupEntity> attrGroupEntities = attrGroupDao.selectList(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", cateId));
+        if (CollectionUtils.isEmpty(attrGroupEntities)){
+            return null;
+        }
+        List<ItemGroupVo> itemGroupVos = attrGroupEntities.stream().map(attrGroupEntity -> {
+            ItemGroupVo itemGroupVo = new ItemGroupVo();
+            Long attrGroupId = attrGroupEntity.getAttrGroupId();
+            itemGroupVo.setGroupId(attrGroupId);
+            itemGroupVo.setGroupName(attrGroupEntity.getAttrGroupName());
+            List<AttrAttrgroupRelationEntity> relationEntities = attrAttrgroupRelationDao.selectList(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_group_id", attrGroupId));
+            if (relationEntities != null) {
+                List<Long> attrIds = relationEntities.stream().map(AttrAttrgroupRelationEntity::getAttrId).collect(Collectors.toList());
+                List<ProductAttrValueEntity> attrValueEntities = attrValueDao.selectList(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId).in("attr_id", attrIds));
+                if (attrValueEntities != null) {
+                    List<ItemBaseAttrVo> itemBaseAttrVos = attrValueEntities.stream().map(attrValue -> {
+                        ItemBaseAttrVo itemBaseAttrVo = new ItemBaseAttrVo();
+                        itemBaseAttrVo.setAttrId(attrValue.getAttrId());
+                        itemBaseAttrVo.setAttrName(attrValue.getAttrName());
+                        itemBaseAttrVo.setAttrValue(attrValue.getAttrValue());
+                        return itemBaseAttrVo;
+                    }).collect(Collectors.toList());
+                    itemGroupVo.setAttrs(itemBaseAttrVos);
+                }
+            }
+            return itemGroupVo;
+        }).collect(Collectors.toList());
+        return itemGroupVos;
     }
 }

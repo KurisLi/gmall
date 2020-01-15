@@ -1,13 +1,12 @@
 package com.atguigu.gmall.pms.service.impl;
 
-import com.atguigu.gmall.pms.vo.BaseAttrVo;
+import com.atguigu.gmall.pms.vo.ItemBaseAttrVo;
 import com.atguigu.gmall.pms.vo.SpuInfoVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -50,7 +49,7 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
     @Override
     public void saveAttrValue(SpuInfoVo spuInfoVo, Long spuId) {
         //1.3保存spu基本属性
-        List<BaseAttrVo> baseAttrs = spuInfoVo.getBaseAttrs();
+        List<ItemBaseAttrVo> baseAttrs = spuInfoVo.getBaseAttrs();
         if (!CollectionUtils.isEmpty(baseAttrs)) {
             List<ProductAttrValueEntity> productAttrValueEntities = baseAttrs.stream().map(baseAttrVo -> {
                 ProductAttrValueEntity productAttrValueEntity = new ProductAttrValueEntity();

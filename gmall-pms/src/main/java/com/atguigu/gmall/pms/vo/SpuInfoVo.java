@@ -13,7 +13,7 @@ import java.util.List;
 public class SpuInfoVo extends SpuInfoEntity {
     private List<String> spuImages;
 
-    private List<BaseAttrVo> baseAttrs;
+    private List<ItemBaseAttrVo> baseAttrs;
 
     private List<SkuInfoVo> skus;
 }
