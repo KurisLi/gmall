@@ -1,0 +1,16 @@
+server:
+  port: 8089
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+jwt:
+  token:
+    pubKeyPath: E:\Project\rsa\rsa.pub
+    priKeyPath: E:\Project\rsa\rsa.pri
+    secret: fwertwer@*#adfe
+    cookieName: gmall-token
+    expireTime: 30
+
+

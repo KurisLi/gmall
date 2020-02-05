@@ -9,6 +9,7 @@ import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.bouncycastle.cert.ocsp.Req;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,25 @@ import com.atguigu.gmall.ums.service.MemberService;
 public class MemberController {
     @Autowired
     private MemberService memberService;
+
+    @PostMapping("query")
+    public Resp<MemberEntity> queryMember(@RequestParam("username") String username,
+                                          @RequestParam("password")String password){
+        MemberEntity memberEntity = memberService.queryMember(username,password);
+        return Resp.ok(memberEntity);
+    }
+
+    @PostMapping("/register")
+    public Resp<Object> register(MemberEntity memberEntity,@RequestParam("code")String code){
+        memberService.register(memberEntity,code);
+        return Resp.ok(null);
+    }
+
+    @GetMapping("/check/{data}/{type}")
+    public Resp<Boolean> checkData(@PathVariable("data")String data,@PathVariable("type") Integer type){
+        Boolean result = memberService.checkData(data,type);
+        return Resp.ok(result);
+    }
 
     /**
      * 列表

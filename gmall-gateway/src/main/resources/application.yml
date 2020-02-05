@@ -39,3 +39,8 @@ spring:
             - Path=/api/item/**
           filters:
             - RewritePath=/api(?<segment>/?.*), $\{segment}
+
+jwt:
+  token:
+    pubKeyPath: E:\Project\rsa\rsa.pub
+    cookieName: gmall-token
