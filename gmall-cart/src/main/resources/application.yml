@@ -9,7 +9,6 @@ spring:
     host: 192.168.190.128
   rabbitmq:
     addresses: 192.168.190.128
-    host: 5601
     username: lzzzzz
     password: lzzzzz
     virtual-host: /lz

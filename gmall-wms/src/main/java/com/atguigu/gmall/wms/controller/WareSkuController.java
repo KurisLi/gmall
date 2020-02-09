@@ -1,13 +1,11 @@
 package com.atguigu.gmall.wms.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-
 import com.atguigu.core.bean.PageVo;
 import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
+import com.atguigu.gmall.wms.entity.WareSkuEntity;
+import com.atguigu.gmall.wms.service.WareSkuService;
+import com.atguigu.gmall.wms.vo.SkuLockVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.atguigu.gmall.wms.entity.WareSkuEntity;
-import com.atguigu.gmall.wms.service.WareSkuService;
+import java.util.Arrays;
+import java.util.List;
 
 
 
@@ -34,6 +32,15 @@ import com.atguigu.gmall.wms.service.WareSkuService;
 public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
+
+    /**
+     * 验库并锁库方法
+     */
+    @PostMapping
+    public Resp<List<SkuLockVo>> checkAndLock(@RequestBody List<SkuLockVo> skuLockVos){
+        List<SkuLockVo> skuLocks = wareSkuService.checkAndLock(skuLockVos);
+        return Resp.ok(skuLocks);
+    }
 
     /**
      * 根据skuid查询仓库
