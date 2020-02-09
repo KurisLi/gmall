@@ -1,8 +1,8 @@
 package com.atguigu.gmall.order.pojo;
 
+import com.atguigu.gmall.oms.vo.OrderItemVo;
 import com.atguigu.gmall.ums.entity.MemberReceiveAddressEntity;
 import lombok.Data;
-import org.hibernate.validator.constraints.EAN;
 
 import java.util.List;
 
