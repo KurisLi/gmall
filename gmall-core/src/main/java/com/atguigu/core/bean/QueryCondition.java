@@ -19,7 +19,7 @@ public class QueryCondition {
     @ApiModelProperty(name = "sidx",value = "排序的字段",required = false)
     private String sidx;
 
-    @ApiModelProperty(name = "order",value = "排序的顺序",required = false)
+    @ApiModelProperty(name = "controller",value = "排序的顺序",required = false)
     private String order;
 
     @ApiModelProperty(name = "asc",value = "系统默认排序",required = false)

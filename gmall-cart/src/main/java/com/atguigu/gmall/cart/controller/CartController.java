@@ -21,6 +21,44 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
+    /**
+     * 获取选中的购物车
+     */
+    @GetMapping("{userId}")
+    public List<Cart> getCheckedCarts(@PathVariable("userId") Long userId){
+        return cartService.getCheckedCarts(userId);
+    }
+
+    /**
+     *删除购物车
+     */
+    @PostMapping("delete")
+    public Resp<Object> delete(@RequestParam("skuId") Long skuId){
+        cartService.delete(skuId);
+        return Resp.ok(null);
+    }
+
+    /**
+     * 更新选中状态
+     */
+    @PostMapping("check")
+    public Resp<Object> updateChecked(@RequestBody Cart cart){
+        cartService.updateChecked(cart);
+        return Resp.ok(null);
+    }
+
+
+    /**
+     * 更新购物车数量
+     * @param cart
+     * @return
+     */
+    @PostMapping("update")
+    public Resp<Object> updateNum(@RequestBody Cart cart){
+        cartService.updateNum(cart);
+        return Resp.ok(null);
+    }
+
     @PostMapping
     public Resp<Object> addCart(@RequestBody Cart cart){
         cartService.addCart(cart);

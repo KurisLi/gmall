@@ -21,7 +21,7 @@ public class SearchParam {
     private String[] catelog3;
     private Double priceFrom;
     private Double priceTo;
-    //0：综合排序  1：销量  2：价格  order=1:asc 冒号前是排序字段，冒号后是排序规则
+    //0：综合排序  1：销量  2：价格  controller=1:asc 冒号前是排序字段，冒号后是排序规则
     private String order;
     //检索属性的集合，格式：2:win10-android-ios  冒号前是属性的id，冒号后是属性值（多个以”-“分隔）
     private List<String> props;

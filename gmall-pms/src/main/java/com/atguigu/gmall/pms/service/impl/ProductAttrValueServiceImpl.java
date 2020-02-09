@@ -1,5 +1,6 @@
 package com.atguigu.gmall.pms.service.impl;
 
+import com.atguigu.gmall.pms.vo.BaseAttrVo;
 import com.atguigu.gmall.pms.vo.ItemBaseAttrVo;
 import com.atguigu.gmall.pms.vo.SpuInfoVo;
 import org.springframework.beans.BeanUtils;
@@ -49,7 +50,7 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
     @Override
     public void saveAttrValue(SpuInfoVo spuInfoVo, Long spuId) {
         //1.3保存spu基本属性
-        List<ItemBaseAttrVo> baseAttrs = spuInfoVo.getBaseAttrs();
+        List<BaseAttrVo> baseAttrs = spuInfoVo.getBaseAttrs();
         if (!CollectionUtils.isEmpty(baseAttrs)) {
             List<ProductAttrValueEntity> productAttrValueEntities = baseAttrs.stream().map(baseAttrVo -> {
                 ProductAttrValueEntity productAttrValueEntity = new ProductAttrValueEntity();

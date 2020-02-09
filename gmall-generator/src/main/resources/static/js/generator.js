@@ -26,7 +26,7 @@ $(function () {
         prmNames : {
             page:"page", 
             rows:"limit", 
-            order: "order"
+            order: "controller"
         },
         gridComplete:function(){
         	//隐藏grid底部滚动条

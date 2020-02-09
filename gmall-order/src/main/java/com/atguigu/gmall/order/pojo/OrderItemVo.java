@@ -1,4 +1,4 @@
-package com.atguigu.gmall.cart.pojo;
+package com.atguigu.gmall.order.pojo;
 
 import com.atguigu.gmall.pms.entity.SkuSaleAttrValueEntity;
 import com.atguigu.gmall.sms.vo.ItemSaleVo;
@@ -9,10 +9,10 @@ import java.util.List;
 
 /**
  * @author lzzzzz
- * @create 2020-01-30 19:53
+ * @create 2020-02-07 21:36
  */
 @Data
-public class Cart {
+public class OrderItemVo {
     private Long skuId;
     private String skuTitle;
     private String image;
@@ -20,6 +20,6 @@ public class Cart {
     private BigDecimal price;
     private Integer count;
     private Boolean store = false;
-    private Boolean check;
     private List<ItemSaleVo> sales;
+    private BigDecimal weight;
 }

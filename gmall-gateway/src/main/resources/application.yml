@@ -39,6 +39,13 @@ spring:
             - Path=/api/item/**
           filters:
             - RewritePath=/api(?<segment>/?.*), $\{segment}
+        - id: order-route  #订单页面管理路由
+          uri: lb://order-service
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - RewritePath=/api(?<segment>/?.*), $\{segment}
+            - Auth
 
 jwt:
   token:

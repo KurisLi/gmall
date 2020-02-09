@@ -11,6 +11,7 @@ import com.atguigu.core.bean.Resp;
 import com.atguigu.gmall.pms.vo.SpuInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,9 @@ public class SpuInfoController {
 
     @Autowired
     private SpuInfoService spuInfoService;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     /**
      * 通过catId查询spu信息
@@ -98,7 +102,8 @@ public class SpuInfoController {
     @PreAuthorize("hasAuthority('pms:spuinfo:update')")
     public Resp<Object> update(@RequestBody SpuInfoEntity spuInfo){
 		spuInfoService.updateById(spuInfo);
-
+        //假设修改spu时发送消息给mq，用来同步购物的价格
+        amqpTemplate.convertAndSend("GMALL-PMS-EXCHANGE","cart.update",spuInfo.getId());
         return Resp.ok(null);
     }
 
